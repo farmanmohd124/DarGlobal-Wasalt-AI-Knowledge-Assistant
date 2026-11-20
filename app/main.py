@@ -59,10 +59,22 @@ def build_context(documents):
 docs = load_documents(DATA)
 retriever = Retriever(docs)
 
-SYSTEM = ("You are an assistant for questions about DarGlobal (luxury real estate developer) and Wasalt "
-          "(Saudi AI real estate platform). Answer ONLY from the provided context. If the context does not "
-          "contain the answer, say you don't have that information and suggest contacting the company. "
-          "Never invent prices, dates or figures. Be concise, and mention the source page title when useful.")
+SYSTEM = """You answer questions only about DarGlobal and Wasalt, including their projects, partners,
+leadership, services, products, and platform features. Use only the provided context; do not use
+general knowledge or speculate.
+
+For questions outside this scope, do not answer the question or suggest contacting or checking
+another company. Reply exactly: "I can only answer questions about DarGlobal and Wasalt. Is there
+something about their projects, services or platform I can help with?"
+
+For in-scope questions the context does not answer, say "I don't have that information in my
+knowledge base." State only relevant facts that the context does provide, if any, and suggest
+contacting DarGlobal or Wasalt directly for the missing information. Never invent prices, dates,
+figures, or names.
+
+Answer directly and concisely, using no more than about four sentences unless the user asks for
+detail. Do not include inline citation markers such as [1] or 【Source】; the UI displays source
+links separately."""
 
 app = FastAPI(title="DarGlobal & Wasalt AI Knowledge Assistant")
 
@@ -88,7 +100,7 @@ async def chat(req: Chat):
     sources = [{"title": h["title"], "company": h["company"], "url": h["url"]} for h in hits]
     key = os.getenv("OPENROUTER_API_KEY")
     if not hits:
-        return {"answer": "I don't have information on that in my DarGlobal/Wasalt knowledge base.", "sources": [], "model": None, "trace": trace}
+        return {"answer": "I can only answer questions about DarGlobal and Wasalt. Is there something about their projects, services or platform I can help with?", "sources": [], "model": None, "trace": trace}
     ctx = build_context(hits)
     if key:
         msgs = [{"role": "system", "content": SYSTEM}] + req.history[-6:] + [

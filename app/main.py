@@ -113,8 +113,12 @@ async def chat(req: Chat):
                         return {"answer": result["answer"].strip(), "sources": sources, "model": m, "trace": trace}
                 except Exception:
                     continue
-    # fallback: retrieval-only answer
-    return {"answer": "(LLM unavailable – showing best matching facts)\n\n" + hits[0]["text"], "sources": sources, "model": None, "trace": trace}
+    return {
+        "answer": "The assistant is temporarily unable to generate an answer right now. Please try again in a moment.",
+        "sources": [],
+        "model": None,
+        "trace": trace,
+    }
 
 
 @traceable(

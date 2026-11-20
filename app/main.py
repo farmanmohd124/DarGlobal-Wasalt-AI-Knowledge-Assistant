@@ -96,6 +96,25 @@ def health(): return {"status": "ok", "chunks": len(docs), "retrieval": retrieve
     process_outputs=chat_outputs,
 )
 async def chat(req: Chat):
+    greeting = req.message.strip().lower().strip(" \t\r\n!.,?")
+    if greeting in {
+        "hi",
+        "hello",
+        "hey",
+        "hi there",
+        "hello there",
+        "hey there",
+        "good morning",
+        "good afternoon",
+        "good evening",
+    }:
+        return {
+            "answer": "Hi! I can help with questions about DarGlobal and Wasalt. What would you like to know?",
+            "sources": [],
+            "model": None,
+            "trace": {"query": req.message, "mode": "greeting"},
+        }
+
     hits, trace = retriever.search(req.message)
     sources = [{"title": h["title"], "company": h["company"], "url": h["url"]} for h in hits]
     key = os.getenv("OPENROUTER_API_KEY")

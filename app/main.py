@@ -64,7 +64,7 @@ SYSTEM = ("You are an assistant for questions about DarGlobal (luxury real estat
           "contain the answer, say you don't have that information and suggest contacting the company. "
           "Never invent prices, dates or figures. Be concise, and mention the source page title when useful.")
 
-app = FastAPI(title="DarGlobal & Wasalt AI Knowledge Assista")
+app = FastAPI(title="DarGlobal & Wasalt AI Knowledge Assistant")
 
 class Chat(BaseModel):
     message: str
